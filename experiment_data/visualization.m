@@ -8,23 +8,66 @@ BuscoordsFile='../European_LV_CSV/Buscoords.csv';
 
 
 %% Get data
-Lines = readtable(linesFile,'HeaderLines',1,'Format','%s%u%u%s%f%s%s');
+Lines = readtable(linesFile,'HeaderLines',1,'Format','%s%f%f%s%f%s%s');
 LineCodes = readtable (lineCodeFile, 'HeaderLines',1,'Format','%s%u%f%f%f%f%f%f%s');
-BuscoordsFile = readtable(BuscoordsFile, 'HeaderLines',1,'Format', '%u%f%f');
+Buscoords = readtable(BuscoordsFile, 'HeaderLines',1,'Format', '%f%f%f');
 
-
+% put information of lines together
+LineCodes.Properties.VariableNames{'Name'} = 'LineCode';
+T =table([1:size(LineCodes,1)]','VariableNames',{'LineCodeIndex'})
+LineCodes=[LineCodes T];
+Lines=join(Lines, LineCodes,'key','LineCode');
 %% Graph construction
+
+%Edges start and terminal
+s = Lines{:,2};
+t = Lines{:,3};
+
+%node labels
+nLabels = Buscoords{:,'Busname'}';
+eLabels = Lines{:,'LineCode'};
+weigths = Lines{:,'Length'} .* complex(Lines{:,'R1'}, Lines{:,'X1'});
+
+weigthsAbs= abs(weigths);
+
+
+% Plot network
+G = graph(s,t, weigthsAbs);
+LWidths = 10*Lines{:,'LineCodeIndex'}/max(Lines{:,'LineCodeIndex'});
+p=plot(G,'LineWidth', LWidths );
+%p=plot(G,'EdgeLabel',Lines{:,'LineCode'}, 'LineWidth', LWidths );
+p.XData=Buscoords{:,'x'}';
+p.YData=Buscoords{:,'y'}';
+
+
+
+
 %Define edges
-LineCodesArray=table2array(LineCodes(:,1));
-for i=2:size(Lines,1) % start from second row
+LineCodesArray=LineCodes{:,1};
+for i=1:size(Lines,1) % start from second row
     %define weight
- LineCode = table2array( Lines(i,end) );
- LineLength = table2cell(Lines(i,5));
- LineLength = LineLength{:}/1000; % transfer from [m] to [km]
+ LineCode = Lines{i,end};
+ LineLength = Lines{i,5}/1000; % tranform [m] to [KM]
+
  
- index= find(LineCodesArray{:}== LineCode);
+ for index=1:length(LineCodesArray)
+ if isequal(LineCodesArray(index), LineCode);
+     break
+ end
+ end
+ 
+ R = LineCodes{index,3};
+ X = LineCodes{index,4};
  
  
- LineWeigth(i,1)= LineLength * (LineCodes(index,3) + LineCodes(index,4)*i ); 
+ 
+ LinesImpedance(i,1)= LineLength * complex( R, X );
+ LinesType(i,:)= index; 
 end
 
+%s =  cell2mat( table2cell( Lines(:,2) ) );
+%t =  cell2mat( table2cell( Lines(:,3) ) );
+weigths = LinesImpedance;
+code = Lines(:,1);
+
+names= Buscoords{:,1};
