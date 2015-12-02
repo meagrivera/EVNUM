@@ -44,22 +44,24 @@ weigths = Lines{:,'Length'} .* complex(Lines{:,'R1'}, Lines{:,'X1'});
 weigthsAbs= abs(weigths);
 
 
-%% Plot IEEE European LV Test Feeder
-% Contruct graph
+%% Plot original IEEE network
 EdgeTable = table([s t], weigths , eLabels, 'VariableNames', {'EndNodes' 'Admittance' 'Name'} );
 NodeTable = Buscoords;
 G1=graph(EdgeTable,NodeTable)
-
-
-% Plot
+%G1 = graph(s,t, weigthsAbs,nLabels,eLabels);
+%LWidths = 20*Lines{:,'LineCodeIndex'}/max(Lines{:,'LineCodeIndex'});
+%p=plot(G,'LineWidth', LWidths );
 figure
 %Full plot
 %p=plot(G1,'LineWidth',1,'NodeLabel',G1.Nodes.Busname,'EdgeLabel',G1.Edges.Name);
 % simple
 p=plot(G1,'LineWidth',2)
+
+
 title('Original IEEE European LV Test Feeder')
 axis([min(Buscoords{:,'x'})-10 max(Buscoords{:,'x'})+10 min(Buscoords{:,'y'}')-10 max(Buscoords{:,'y'}')+10])
-p.XData=Buscoords{:,'x'}'; 
+
+p.XData=Buscoords{:,'x'}'; % x 
 p.YData=Buscoords{:,'y'}';
 p.Marker = 'none'; % no marker on connection nodes
 highlight(p,Loads{:,'Busname'},'MarkerSize',5 ,'NodeColor','k', 'Marker','v') % highlight Loads
@@ -71,19 +73,20 @@ axis off
 set(gca,'position',[0 0 1 1],'units','normalized')
 end
 
-%% Plot Simplified IEEE European LV Test Feeder
+%% Reduced graph (only consider paths to loads)
 
-% Contruct graph
-tree = shortestpathtree(G1,Loads{:,'Busname'},1); % paths to load
-G2= graph(tree.Edges, tree.Nodes); 
+%Construct graph with lines where load 
+tree = shortestpathtree(G1,Loads{:,'Busname'},1);
+G2= graph(tree.Edges, tree.Nodes);
 
-% Plot
+%
 figure
 p2=plot(G2,'LineWidth',2)
 title('Modified IEEE European LV Test Feeder')
 axis([min(Buscoords{:,'x'})-10 max(Buscoords{:,'x'})+10 min(Buscoords{:,'y'}')-10 max(Buscoords{:,'y'}')+10])
-p2.XData=Buscoords{G2.Nodes.Busname ,'x'}';
-p2.YData=Buscoords{G2.Nodes.Busname ,'y'}';
+
+ p2.XData=Buscoords{G2.Nodes.Busname ,'x'}';
+ p2.YData=Buscoords{G2.Nodes.Busname ,'y'}';
 p2.Marker = 'none'; % no marker on connection nodes
 highlight(p2,Loads{:,'Busname'},'MarkerSize',5 ,'NodeColor','k', 'Marker','v') % highlight Loads
 highlight(p2,1,'MarkerSize',8 ,'NodeColor','r', 'Marker','s')
@@ -94,8 +97,8 @@ axis off
 set(gca,'position',[0 0 1 1],'units','normalized')
 end
 
-%% Clean up nodes without connection
-%G2 = rmnode(G2,find(degree(G2)==0)) ;
+% in case cleanup is necessary
+G2 = rmnode(G2,find(degree(G2)==0)) ;
 
 
 
