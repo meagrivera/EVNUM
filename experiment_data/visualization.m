@@ -67,27 +67,17 @@ EdgeTable = table([s t], weigths , eLabels, Lines{:,'Ampacity'}, 'VariableNames'
 NodeTable = Buscoords;
 G1=graph(EdgeTable,NodeTable);
 
-% Construc graph only with paths to loads
-tree = shortestpathtree(G1,Loads{:,'Busname'},1); % paths to load
+% Construc helping graph G2 only with paths to loads
+tree = shortestpathtree(G1,Loads{:,'Busname'},1); % directed graphs to load to load
 G2= graph(tree.Edges, tree.Nodes);
 indexTerminal = find(degree(G2)==1);
 indexJunction = find(degree(G2)>2);
 indexRouting = find(degree(G2)==2);
 indexNewNodes= [indexTerminal; indexJunction];
 
-% build new Graph with less nodes (use option ForPaper=0 to verify visually )
+% New simple Graph with less nodes (verify visually )
 snew= [1  25 27 27 25 32 36 36 32 59 66 66 59  101 155 155 171 188 188 171 196 196 241 241 101 114 127 127 145 261 261 145 283 283 114 247 247 263 263 280 373 373 391 530 530 391 505 505 578 578 594 594 615 615 666 786 786 854 854 666 686 690 690 686 691 691 707 891 891 707 718 739 739 718 745 763 763 745 794 884 884 794 868 868 280 310 336 336 310 325 325 332 332 453 453 475 484 484 475 508 544 544 508 559 651 651 559 587 587];
 tnew= [25 27 70 34 32 36 47 83 59 66 73 74 101 155 178 171 188 208 264 196 225 241 248 249 114 127 289 145 261 314 276 283 327 320 247 387 263 342 280 373 458 391 530 556 539 505 522 578 785 594 614 615 688 666 786 817 854 861 860 686 690 701 778 691 702 707 891 896 900 718 739 813 755 745 763 835 780 794 884 906 898 868 899 886 310 336 349 388 325 337 332 406 453 629 475 484 563 502 508 544 611 562 559 651 676 682 587 619 639];
-
-% Determine ampacity (may need to fix this by hand)
-for i=1:length(tnew)
-
-    idxLine= find(Lines.Bus2== tnew(i));
-    if length(idxLine)>1
-        spritf('something wong')
-    end
-    newAmpacity(i)= Lines.Ampacity(idxLine(1));
-end
 
 %Verify all loads are accountted for
 for i= 1: size(Loads,1)
@@ -100,7 +90,20 @@ for i= 1: size(Loads,1)
 end
 
 
-% Calculate impedance of lines
+% Determine ampacity of simplified Graph (may need to fix terminal edges)
+for i=1:length(tnew)
+
+    idxLine= find(Lines.Bus2== tnew(i));
+    if length(idxLine)>1
+        spritf('\t something wrong')
+    end
+    newAmpacity(i)= Lines.Ampacity(idxLine(1));
+end
+
+
+
+
+% Calculate impedances of simple Graph
 Greal = graph(s,t, real(weigths) );
 Gimag = graph (s, t, imag(weigths));
 
@@ -115,15 +118,17 @@ for i=1:length(newWeigths)
     newLineNames{i}= ['c_' num2str(i)];
     
 end
-%newAmpacity= 
 
-% Create simplified graph
+
+% Create simplified Graph
 EdgeTableNew = table([snew' tnew'], newWeigths, newLineNames', newAmpacity' , 'VariableNames', {'EndNodes' 'Admittance' 'Name' 'Ampacity'} );
 NodeTableNew = Buscoords;
 Gsimple=graph(EdgeTableNew,NodeTableNew);
 
-Gplot = rmnode(Gsimple,find(degree(Gsimple)==0)); % remove nodes for plot
-% determine Load Index
+% Remove nodes for plot
+Gplot = rmnode(Gsimple,find(degree(Gsimple)==0)); 
+
+% Determine Load Index for Gplot
 indexLoad=[];
 for i=1:length(Gplot.Nodes{:,1})
     
@@ -135,71 +140,50 @@ for i=1:length(Gplot.Nodes{:,1})
 end
 
 
-%% Plot
+%% Plots
+
+% Plot for inspection
 figure
-if ForPaper== 1
-    
-     %ptest=plot(Gplot,'LineWidth',2,'MarkerSize', 5,'EdgeLabel',Gplot.Edges.Ampacity);
-     %layout(ptest,'layered','Direction','right','Sources',[1])
-     %highlight(ptest,,'MarkerSize',5 ,'NodeColor','k', 'Marker','v')
+%p=plot(G1,'LineWidth',2, 'EdgeLabel',G1.Edges.Ampacity);
+p=plot(G1,'LineWidth',2);
+title('Original IEEE European LV Test Feeder: (green=loads, red=junctions)')
+axis([min(Buscoords{:,'x'})-10 max(Buscoords{:,'x'})+10 min(Buscoords{:,'y'}')-10 max(Buscoords{:,'y'}')+10])
+p.XData=Buscoords{:,'x'}';
+p.YData=Buscoords{:,'y'}';
 
-     psimple=plot(Gplot,'LineWidth',2,'MarkerSize', 5)
-          axis([min(Buscoords{:,'x'})-10 max(Buscoords{:,'x'})+10 min(Buscoords{:,'y'}')-10 max(Buscoords{:,'y'}')+10])
-     psimple.XData=Gplot.Nodes.x;
-     psimple.YData=Gplot.Nodes.y;
-  %  highlight(ptest,indexJunction,'MarkerSize',10 ,'NodeColor','r')
-%     p2=plot(G2,'LineWidth',2,'Marker','none');
-%     p2.XData=Buscoords{G2.Nodes.Busname ,'x'}';
-%     p2.YData=Buscoords{G2.Nodes.Busname ,'y'}';
-%     
-    hold on
-    
-    p=plot(G1,'LineStyle','--');
-    axis off
-    set(gca,'position',[0 0 1 1],'units','normalized')
-    
-    
-    axis([min(Buscoords{:,'x'})-10 max(Buscoords{:,'x'})+10 min(Buscoords{:,'y'}')-10 max(Buscoords{:,'y'}')+10])
-    p.XData=Buscoords{:,'x'}';
-    p.YData=Buscoords{:,'y'}';
-    p.Marker = 'none'; % no marker on connection nodes
-    highlight(p,Loads{:,'Busname'},'MarkerSize',5 ,'NodeColor','k', 'Marker','v') % highlight Loads
-    highlight(p,1,'MarkerSize',8 ,'NodeColor','r', 'Marker','s')
-    labelnode(p,1,'Transformer')
-    labelnode(p,Loads{:,'Busname'}, Loads{:,'Name'} )
+% Highlight and name terminal and junction buses
+labelnode(p,indexTerminal, G1.Nodes.Busname(indexTerminal));
+labelnode(p,indexJunction, G1.Nodes.Busname(indexJunction));
+highlight(p,indexTerminal,'MarkerSize',10 ,'NodeColor','g')
+highlight(p,1,'MarkerSize',8 ,'NodeColor','r', 'Marker','s')
+highlight(p,indexJunction,'MarkerSize',10 ,'NodeColor','r')
+labelnode(p,1,'Transformer')
 
-    legend('Simplified','Original')
-    
-else
-    figure
-    p=plot(G1,'LineWidth',2, 'EdgeLabel',G1.Edges.Ampacity);
-    %p=plot(G1,'LineWidth',2);
-    title('Original IEEE European LV Test Feeder')
-    axis([min(Buscoords{:,'x'})-10 max(Buscoords{:,'x'})+10 min(Buscoords{:,'y'}')-10 max(Buscoords{:,'y'}')+10])
-    p.XData=Buscoords{:,'x'}';
-    p.YData=Buscoords{:,'y'}';
-    
-    % Highlight and name terminal and junction buses
-    labelnode(p,indexTerminal, G1.Nodes.Busname(indexTerminal));
-    labelnode(p,indexJunction, G1.Nodes.Busname(indexJunction));
-    highlight(p,indexTerminal,'MarkerSize',10 ,'NodeColor','g')
-    highlight(p,1,'MarkerSize',8 ,'NodeColor','r', 'Marker','s')
-    highlight(p,indexJunction,'MarkerSize',10 ,'NodeColor','r')
-    labelnode(p,1,'Transformer')
-    %labelnode(p,Loads{:,'Busname'}, Loads{:,'Name'} )
+
+% Plot for paper
+figure
+psimple=plot(Gplot,'LineWidth',2,'MarkerSize', 5)
+axis([min(Buscoords{:,'x'})-10 max(Buscoords{:,'x'})+10 min(Buscoords{:,'y'}')-10 max(Buscoords{:,'y'}')+10])
+psimple.XData=Gplot.Nodes.x;
+psimple.YData=Gplot.Nodes.y;
+
+hold on
+
+p=plot(G1,'LineStyle','--');
+axis off
+set(gca,'position',[0 0 1 1],'units','normalized')
+axis([min(Buscoords{:,'x'})-10 max(Buscoords{:,'x'})+10 min(Buscoords{:,'y'}')-10 max(Buscoords{:,'y'}')+10])
+p.XData=Buscoords{:,'x'}';
+p.YData=Buscoords{:,'y'}';
+p.Marker = 'none'; % no marker on connection nodes
+highlight(p,Loads{:,'Busname'},'MarkerSize',5 ,'NodeColor','k', 'Marker','v') % highlight Loads
+highlight(p,1,'MarkerSize',8 ,'NodeColor','r', 'Marker','s')
+labelnode(p,1,'Transformer')
+labelnode(p,Loads{:,'Busname'}, Loads{:,'Name'} )
+
+
+%% Extract test grid data
+
+
+
   
-    
-    
-%     
-%     
-%     highlight(p,indexRouting,'MarkerSize',10 ,'NodeColor','b')
-    
-    
-end
-
-
-
-
-
-
-
