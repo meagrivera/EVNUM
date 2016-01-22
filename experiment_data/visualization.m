@@ -2,8 +2,8 @@
 clear all
 %% VAriables
 ForPaper = 1; % (1) plots for paper (0) plots not for paper
+Details = 1   % (1) for line and node definitions  
 
-%Define Ampacity of line types 
 
 
 
@@ -22,7 +22,7 @@ Loads = readtable(LoadsFile, 'HeaderLines',2, 'Format', '%s%f%f%s%f%f%s%f%f%s');
 LoadShapes= readtable(LoadShapesFile, 'HeaderLines',1, 'Format', '%s%f%f%s%s');
 
 %Add Ampacity to lines
-Ampacity= [56;    80;    83;   110;   210;   305;   305;   405;   560;  560]; % From similar cables in Power Factory
+Ampacity= [56    80    83   110   210   305   210   405   560   180]'; % From similar cables in Power Factory
 CableNamesPF={ 'NYY 4x6   1.00 kV';... % Cable names in Power Factory
     'PVC-SWA-AL 3x25   1.00 kV';...
     'PVC-SWA-CU 3x16   1.00 kV';...
@@ -32,7 +32,7 @@ CableNamesPF={ 'NYY 4x6   1.00 kV';... % Cable names in Power Factory
     'PILC-AL 1x300   1.00 kV';...
     'PILC-AL 1x185   1.00 kV';...
     'PILC-AL 1x70   1.00 kV'
-    'unknown still waiting on gregorio'};
+    'PILC-CU 3x50   1.00 kV'};
 LineCodes=[LineCodes table(Ampacity,CableNamesPF)];
 
 
@@ -46,6 +46,19 @@ Lines = join(Lines, LineCodes,'key','LineCode');
 Loads.Properties.VariableNames{'Bus'}='Busname';
 Loads = join( Loads, Buscoords,'key', 'Busname' ) ;
 
+% Load profiles
+profile={};
+time={};
+for i=1:size(Loads,1)
+    
+    T = readtable(['../European_LV_CSV/Load_Profiles/Load_profile_' num2str(i) '.csv'] );
+    profile{i,1} = T{:,'mult'};
+    time{i,1} = T{:,'time'};
+end
+
+Loads=[Loads table(time) table(profile)];
+    
+    
 
 %% Regularize IEEE European LV Test Feeder data for EVNUM
 
@@ -146,12 +159,12 @@ end
 figure
 %p=plot(G1,'LineWidth',2, 'EdgeLabel',G1.Edges.Ampacity);
 p=plot(G1,'LineWidth',2);
-title('Original IEEE European LV Test Feeder: (green=loads, red=junctions)')
+%title('Original IEEE European LV Test Feeder: (green=loads, red=junctions)')
 axis([min(Buscoords{:,'x'})-10 max(Buscoords{:,'x'})+10 min(Buscoords{:,'y'}')-10 max(Buscoords{:,'y'}')+10])
 p.XData=Buscoords{:,'x'}';
 p.YData=Buscoords{:,'y'}';
 
-% Highlight and name terminal and junction buses
+% % Highlight and name terminal and junction buses
 labelnode(p,indexTerminal, G1.Nodes.Busname(indexTerminal));
 labelnode(p,indexJunction, G1.Nodes.Busname(indexJunction));
 highlight(p,indexTerminal,'MarkerSize',10 ,'NodeColor','g')
@@ -162,8 +175,8 @@ labelnode(p,1,'Transformer')
 
 % Plot for paper
 figure
-psimple=plot(Gplot,'LineWidth',2,'MarkerSize', 5)
-axis([min(Buscoords{:,'x'})-10 max(Buscoords{:,'x'})+10 min(Buscoords{:,'y'}')-10 max(Buscoords{:,'y'}')+10])
+psimple=plot(Gplot,'LineWidth',2,'MarkerSize', 5);
+axis([min(Buscoords{:,'x'})-10 max(Buscoords{:,'x'})+10 min(Buscoords{:,'y'}')-10 max(Buscoords{:,'y'}')+10]);
 psimple.XData=Gplot.Nodes.x;
 psimple.YData=Gplot.Nodes.y;
 
@@ -182,7 +195,54 @@ labelnode(p,1,'Transformer')
 labelnode(p,Loads{:,'Busname'}, Loads{:,'Name'} )
 
 
-%% Extract test grid data
+%% Extract test grid parameters
+
+% calculate routing matrix
+R=zeros( size(Gplot.Edges,1), length(indexLoad) ); 
+
+for i=1:length(indexLoad)
+    
+    pathToLoad = shortestpath(Gplot,1,indexLoad(i));
+    
+    indexEdges= findedge(Gplot,pathToLoad(1:end-1),pathToLoad(2:end)) ;
+    
+    R(indexEdges,i)=ones(size(indexEdges));
+        
+end
+
+%% Calculate EVNUM parameters 
+
+% Define ampacity of lines
+cinit= Gplot.Edges.Ampacity;
+
+
+% Define load
+profiles= cell2mat(Loads{:,'profile'}');
+profilesAmp= profiles/0.23;
+sumProfilesAmp= sum(profilesAmp');
+indxmax= find(sumProfilesAmp==max(sumProfilesAmp));
+indxmin= find(sumProfilesAmp==min(sumProfilesAmp));
+
+
+xload= profilesAmp';
+xloadmin= profilesAmp(indxmin,:)';
+xloadmax= profilesAmp(indxmax,:)';
+
+
+cmax = cinit - R * xloadmax;
+cmin = cinit - R * xloadmin;
+
+
+%% Calculte power flow parameters
+
+% Admittanc ematrix - calculatred based on incidence matrix 
+I=full( incidence(Gplot))';
+Bline=diag(Gplot.Edges.Admittance);
+
+Y= I'*Bline* I; 
+
+
+
 
 
 
