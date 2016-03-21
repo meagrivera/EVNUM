@@ -14,13 +14,13 @@ Loads = readtable(LoadsFile, 'HeaderLines',2, 'Format', '%s%f%f%s%f%f%s%f%f%s');
 %LoadShapes= readtable(LoadShapesFile, 'HeaderLines',1, 'Format', '%s%f%f%s%s');
 
 %Add Ampacity to lines
-Ampacity= [56    83    83   110   210   305   210   405   560   180]'; % From similar cables in Power Factory
+Ampacity= [56    83    83   110   210   560   210   405   560   180]'; % From similar cables in Power Factory
 CableNamesPF={ 'NYY 4x6   1.00 kV';... % Cable names in Power Factory
     'PVC-SWA-AL 3x25   1.00 kV';...
     'PVC-SWA-CU 3x16   1.00 kV';...
     'PILC-AL 3x35  11.00 kV';...
     'PILC-AL 1x70   1.00 kV';...
-    'PILC-AL 1x120   1.00 kV';...
+    'PILC-AL 1x300   1.00 kV';...
     'PILC-AL 1x70   1.00 kV';...
     'PILC-AL 1x185   1.00 kV';...
     'PILC-AL 1x300   1.00 kV';...
@@ -63,6 +63,7 @@ G=graph(EdgeTable,NodeTable);
 %% Plot
 figure
 p=plot(G,'LineWidth',2);
+%p=plot(G,'LineWidth',2, 'EdgeLabel',G.Edges.Ampacity);
 p.XData=Buscoords{:,'x'}';
 p.YData=Buscoords{:,'y'}';
 
@@ -72,7 +73,7 @@ p.YData=Buscoords{:,'y'}';
 highlight(p,Loads{:,'Busname'},'MarkerSize',6 ,'NodeColor','k', 'Marker','v') 
 highlight(p,1,'MarkerSize',8 ,'NodeColor','r', 'Marker','s')
 labelnode(p,1,'Transformer')
-labelnode(p,Loads{:,'Busname'}, Loads{:,'Name'} )
+labelnode(p,Loads{:,'Busname'}, Loads{:,'Name'})
 
 % style
 axis([min(Buscoords{:,'x'})-10 max(Buscoords{:,'x'})+10 min(Buscoords{:,'y'}')-10 max(Buscoords{:,'y'}')+10])
