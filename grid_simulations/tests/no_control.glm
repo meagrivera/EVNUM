@@ -7,8 +7,8 @@
 clock{ 
 	 timezone EST+5EDT;
 	 timestamp '2000-01-01 0:01:00 EST';
-	 starttime '2000-01-01 09:00:00 EST';
-	 stoptime '2000-01-01 12:00:00 EST';
+	 starttime '2000-01-01 00:00:00 EST';
+	 stoptime '2000-01-02 00:00:00 EST';
 }
 
 //********************************************* 
@@ -17,7 +17,6 @@ module tape;
 module powerflow{
 	 solver_method NR;
 	 default_maximum_voltage_error 1e-6;
-	 NR_iteration_limit 1000;
 	 NR_superLU_procs 1;
 };
 
@@ -25,43 +24,43 @@ module powerflow{
 // Snapshots
 object voltdump 
 {
-	 filename Result_no_control/output_voltage_11_30.csv;
-	 runtime '2000-01-01 11:30:00';
+	 filename Result_no_control/output_voltage_offpeak.csv;
+	 runtime '2000-01-01 00:01:00';
+	 mode polar;
+}
+
+object currdump
+{
+	 filename Result_no_control/output_current_offpeak.csv;
+	 runtime '2000-01-01 00:01:00';
 	 mode polar;
 }
 
 object voltdump 
 {
-	 filename Result_no_control/output_voltage_11.csv;
-	 runtime '2000-01-01 11:00:00';
+	 filename Result_no_control/output_voltage_peak.csv;
+	 runtime '2000-01-01 18:03:00';
+	 mode polar;
+}
+
+object currdump
+{
+	 filename Result_no_control/output_current_peak.csv;
+	 runtime '2000-01-01 18:03:00';
 	 mode polar;
 }
 
 object voltdump 
 {
-	 filename Result_no_control/output_voltage_09.csv;
-	 runtime '2000-01-01 09:00:00';
+	 filename Result_no_control/output_voltage_end.csv;
+	 runtime '2000-01-02 00:00:00';
 	 mode polar;
 }
 
 object currdump
 {
-	 filename Result_no_control/output_current_11_30.csv;
-	 runtime '2000-01-01 11:30:00';
-	 mode polar;
-}
-
-object currdump
-{
-	 filename Result_no_control/output_current_10.csv;
-	 runtime '2000-01-01 10:00:00';
-	 mode polar;
-}
-
-object currdump
-{
-	 filename Result_no_control/output_current_11.csv;
-	 runtime '2000-01-01 11:00:00';
+	 filename Result_no_control/output_current_end.csv;
+	 runtime '2000-01-02 00:00:00';
 	 mode polar;
 }
 
@@ -5595,13 +5594,13 @@ object load {
 
 object player {
 	 name LOAD1_player;
-	 file Load_20kW/Load_profile_1.player;
+	 file Load_4kW/Load_profile_1.player;
 }
 
 object load {
 	 name LOAD2;
 	 parent Bus47;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD2_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -5610,7 +5609,7 @@ object load {
 
 object player {
 	 name LOAD2_player;
-	 file Load_20kW/Load_profile_2.player;
+	 file Load_4kW/Load_profile_2.player;
 }
 
 object load {
@@ -5625,7 +5624,7 @@ object load {
 
 object player {
 	 name LOAD3_player;
-	 file Load_20kW/Load_profile_3.player;
+	 file Load_4kW/Load_profile_3.player;
 }
 
 object load {
@@ -5640,7 +5639,7 @@ object load {
 
 object player {
 	 name LOAD4_player;
-	 file Load_20kW/Load_profile_4.player;
+	 file Load_4kW/Load_profile_4.player;
 }
 
 object load {
@@ -5655,13 +5654,13 @@ object load {
 
 object player {
 	 name LOAD5_player;
-	 file Load_20kW/Load_profile_5.player;
+	 file Load_4kW/Load_profile_5.player;
 }
 
 object load {
 	 name LOAD6;
 	 parent Bus83;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD6_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -5670,13 +5669,13 @@ object load {
 
 object player {
 	 name LOAD6_player;
-	 file Load_20kW/Load_profile_6.player;
+	 file Load_4kW/Load_profile_6.player;
 }
 
 object load {
 	 name LOAD7;
 	 parent Bus178;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD7_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -5685,13 +5684,13 @@ object load {
 
 object player {
 	 name LOAD7_player;
-	 file Load_20kW/Load_profile_7.player;
+	 file Load_4kW/Load_profile_7.player;
 }
 
 object load {
 	 name LOAD8;
 	 parent Bus208;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD8_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -5700,7 +5699,7 @@ object load {
 
 object player {
 	 name LOAD8_player;
-	 file Load_20kW/Load_profile_8.player;
+	 file Load_4kW/Load_profile_8.player;
 }
 
 object load {
@@ -5715,13 +5714,13 @@ object load {
 
 object player {
 	 name LOAD9_player;
-	 file Load_20kW/Load_profile_9.player;
+	 file Load_4kW/Load_profile_9.player;
 }
 
 object load {
 	 name LOAD10;
 	 parent Bus248;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD10_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -5730,13 +5729,13 @@ object load {
 
 object player {
 	 name LOAD10_player;
-	 file Load_20kW/Load_profile_10.player;
+	 file Load_4kW/Load_profile_10.player;
 }
 
 object load {
 	 name LOAD11;
 	 parent Bus249;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD11_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -5745,13 +5744,13 @@ object load {
 
 object player {
 	 name LOAD11_player;
-	 file Load_20kW/Load_profile_11.player;
+	 file Load_4kW/Load_profile_11.player;
 }
 
 object load {
 	 name LOAD12;
 	 parent Bus264;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD12_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -5760,13 +5759,13 @@ object load {
 
 object player {
 	 name LOAD12_player;
-	 file Load_20kW/Load_profile_12.player;
+	 file Load_4kW/Load_profile_12.player;
 }
 
 object load {
 	 name LOAD13;
 	 parent Bus276;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD13_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -5775,7 +5774,7 @@ object load {
 
 object player {
 	 name LOAD13_player;
-	 file Load_20kW/Load_profile_13.player;
+	 file Load_4kW/Load_profile_13.player;
 }
 
 object load {
@@ -5790,13 +5789,13 @@ object load {
 
 object player {
 	 name LOAD14_player;
-	 file Load_20kW/Load_profile_14.player;
+	 file Load_4kW/Load_profile_14.player;
 }
 
 object load {
 	 name LOAD15;
 	 parent Bus314;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD15_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -5805,13 +5804,13 @@ object load {
 
 object player {
 	 name LOAD15_player;
-	 file Load_20kW/Load_profile_15.player;
+	 file Load_4kW/Load_profile_15.player;
 }
 
 object load {
 	 name LOAD16;
 	 parent Bus320;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD16_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -5820,13 +5819,13 @@ object load {
 
 object player {
 	 name LOAD16_player;
-	 file Load_20kW/Load_profile_16.player;
+	 file Load_4kW/Load_profile_16.player;
 }
 
 object load {
 	 name LOAD17;
 	 parent Bus327;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD17_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -5835,13 +5834,13 @@ object load {
 
 object player {
 	 name LOAD17_player;
-	 file Load_20kW/Load_profile_17.player;
+	 file Load_4kW/Load_profile_17.player;
 }
 
 object load {
 	 name LOAD18;
 	 parent Bus337;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD18_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -5850,13 +5849,13 @@ object load {
 
 object player {
 	 name LOAD18_player;
-	 file Load_20kW/Load_profile_18.player;
+	 file Load_4kW/Load_profile_18.player;
 }
 
 object load {
 	 name LOAD19;
 	 parent Bus342;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD19_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -5865,7 +5864,7 @@ object load {
 
 object player {
 	 name LOAD19_player;
-	 file Load_20kW/Load_profile_19.player;
+	 file Load_4kW/Load_profile_19.player;
 }
 
 object load {
@@ -5880,7 +5879,7 @@ object load {
 
 object player {
 	 name LOAD20_player;
-	 file Load_20kW/Load_profile_20.player;
+	 file Load_4kW/Load_profile_20.player;
 }
 
 object load {
@@ -5895,7 +5894,7 @@ object load {
 
 object player {
 	 name LOAD21_player;
-	 file Load_20kW/Load_profile_21.player;
+	 file Load_4kW/Load_profile_21.player;
 }
 
 object load {
@@ -5910,13 +5909,13 @@ object load {
 
 object player {
 	 name LOAD22_player;
-	 file Load_20kW/Load_profile_22.player;
+	 file Load_4kW/Load_profile_22.player;
 }
 
 object load {
 	 name LOAD23;
 	 parent Bus406;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD23_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -5925,13 +5924,13 @@ object load {
 
 object player {
 	 name LOAD23_player;
-	 file Load_20kW/Load_profile_23.player;
+	 file Load_4kW/Load_profile_23.player;
 }
 
 object load {
 	 name LOAD24;
 	 parent Bus458;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD24_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -5940,7 +5939,7 @@ object load {
 
 object player {
 	 name LOAD24_player;
-	 file Load_20kW/Load_profile_24.player;
+	 file Load_4kW/Load_profile_24.player;
 }
 
 object load {
@@ -5955,13 +5954,13 @@ object load {
 
 object player {
 	 name LOAD25_player;
-	 file Load_20kW/Load_profile_25.player;
+	 file Load_4kW/Load_profile_25.player;
 }
 
 object load {
 	 name LOAD26;
 	 parent Bus522;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD26_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -5970,13 +5969,13 @@ object load {
 
 object player {
 	 name LOAD26_player;
-	 file Load_20kW/Load_profile_26.player;
+	 file Load_4kW/Load_profile_26.player;
 }
 
 object load {
 	 name LOAD27;
 	 parent Bus539;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD27_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -5985,13 +5984,13 @@ object load {
 
 object player {
 	 name LOAD27_player;
-	 file Load_20kW/Load_profile_27.player;
+	 file Load_4kW/Load_profile_27.player;
 }
 
 object load {
 	 name LOAD28;
 	 parent Bus556;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD28_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -6000,7 +5999,7 @@ object load {
 
 object player {
 	 name LOAD28_player;
-	 file Load_20kW/Load_profile_28.player;
+	 file Load_4kW/Load_profile_28.player;
 }
 
 object load {
@@ -6015,7 +6014,7 @@ object load {
 
 object player {
 	 name LOAD29_player;
-	 file Load_20kW/Load_profile_29.player;
+	 file Load_4kW/Load_profile_29.player;
 }
 
 object load {
@@ -6030,7 +6029,7 @@ object load {
 
 object player {
 	 name LOAD30_player;
-	 file Load_20kW/Load_profile_30.player;
+	 file Load_4kW/Load_profile_30.player;
 }
 
 object load {
@@ -6045,13 +6044,13 @@ object load {
 
 object player {
 	 name LOAD31_player;
-	 file Load_20kW/Load_profile_31.player;
+	 file Load_4kW/Load_profile_31.player;
 }
 
 object load {
 	 name LOAD32;
 	 parent Bus614;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD32_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -6060,13 +6059,13 @@ object load {
 
 object player {
 	 name LOAD32_player;
-	 file Load_20kW/Load_profile_32.player;
+	 file Load_4kW/Load_profile_32.player;
 }
 
 object load {
 	 name LOAD33;
 	 parent Bus619;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD33_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -6075,7 +6074,7 @@ object load {
 
 object player {
 	 name LOAD33_player;
-	 file Load_20kW/Load_profile_33.player;
+	 file Load_4kW/Load_profile_33.player;
 }
 
 object load {
@@ -6090,13 +6089,13 @@ object load {
 
 object player {
 	 name LOAD34_player;
-	 file Load_20kW/Load_profile_34.player;
+	 file Load_4kW/Load_profile_34.player;
 }
 
 object load {
 	 name LOAD35;
 	 parent Bus639;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD35_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -6105,13 +6104,13 @@ object load {
 
 object player {
 	 name LOAD35_player;
-	 file Load_20kW/Load_profile_35.player;
+	 file Load_4kW/Load_profile_35.player;
 }
 
 object load {
 	 name LOAD36;
 	 parent Bus676;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD36_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -6120,13 +6119,13 @@ object load {
 
 object player {
 	 name LOAD36_player;
-	 file Load_20kW/Load_profile_36.player;
+	 file Load_4kW/Load_profile_36.player;
 }
 
 object load {
 	 name LOAD37;
 	 parent Bus682;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD37_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -6135,13 +6134,13 @@ object load {
 
 object player {
 	 name LOAD37_player;
-	 file Load_20kW/Load_profile_37.player;
+	 file Load_4kW/Load_profile_37.player;
 }
 
 object load {
 	 name LOAD38;
 	 parent Bus688;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD38_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -6150,13 +6149,13 @@ object load {
 
 object player {
 	 name LOAD38_player;
-	 file Load_20kW/Load_profile_38.player;
+	 file Load_4kW/Load_profile_38.player;
 }
 
 object load {
 	 name LOAD39;
 	 parent Bus701;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD39_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -6165,13 +6164,13 @@ object load {
 
 object player {
 	 name LOAD39_player;
-	 file Load_20kW/Load_profile_39.player;
+	 file Load_4kW/Load_profile_39.player;
 }
 
 object load {
 	 name LOAD40;
 	 parent Bus702;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD40_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -6180,13 +6179,13 @@ object load {
 
 object player {
 	 name LOAD40_player;
-	 file Load_20kW/Load_profile_40.player;
+	 file Load_4kW/Load_profile_40.player;
 }
 
 object load {
 	 name LOAD41;
 	 parent Bus755;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD41_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -6195,13 +6194,13 @@ object load {
 
 object player {
 	 name LOAD41_player;
-	 file Load_20kW/Load_profile_41.player;
+	 file Load_4kW/Load_profile_41.player;
 }
 
 object load {
 	 name LOAD42;
 	 parent Bus778;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD42_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -6210,13 +6209,13 @@ object load {
 
 object player {
 	 name LOAD42_player;
-	 file Load_20kW/Load_profile_42.player;
+	 file Load_4kW/Load_profile_42.player;
 }
 
 object load {
 	 name LOAD43;
 	 parent Bus780;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD43_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -6225,13 +6224,13 @@ object load {
 
 object player {
 	 name LOAD43_player;
-	 file Load_20kW/Load_profile_43.player;
+	 file Load_4kW/Load_profile_43.player;
 }
 
 object load {
 	 name LOAD44;
 	 parent Bus785;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD44_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -6240,13 +6239,13 @@ object load {
 
 object player {
 	 name LOAD44_player;
-	 file Load_20kW/Load_profile_44.player;
+	 file Load_4kW/Load_profile_44.player;
 }
 
 object load {
 	 name LOAD45;
 	 parent Bus813;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD45_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -6255,7 +6254,7 @@ object load {
 
 object player {
 	 name LOAD45_player;
-	 file Load_20kW/Load_profile_45.player;
+	 file Load_4kW/Load_profile_45.player;
 }
 
 object load {
@@ -6270,13 +6269,13 @@ object load {
 
 object player {
 	 name LOAD46_player;
-	 file Load_20kW/Load_profile_46.player;
+	 file Load_4kW/Load_profile_46.player;
 }
 
 object load {
 	 name LOAD47;
 	 parent Bus835;
-	 phases C;
+	 phases A;
 	 base_power_C LOAD47_player.value*1052.631579;
 	 power_fraction_C 1.0;
 	 power_pf_C 0.950000;
@@ -6285,7 +6284,7 @@ object load {
 
 object player {
 	 name LOAD47_player;
-	 file Load_20kW/Load_profile_47.player;
+	 file Load_4kW/Load_profile_47.player;
 }
 
 object load {
@@ -6300,7 +6299,7 @@ object load {
 
 object player {
 	 name LOAD48_player;
-	 file Load_20kW/Load_profile_48.player;
+	 file Load_4kW/Load_profile_48.player;
 }
 
 object load {
@@ -6315,13 +6314,13 @@ object load {
 
 object player {
 	 name LOAD49_player;
-	 file Load_20kW/Load_profile_49.player;
+	 file Load_4kW/Load_profile_49.player;
 }
 
 object load {
 	 name LOAD50;
 	 parent Bus886;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD50_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -6330,7 +6329,7 @@ object load {
 
 object player {
 	 name LOAD50_player;
-	 file Load_20kW/Load_profile_50.player;
+	 file Load_4kW/Load_profile_50.player;
 }
 
 object load {
@@ -6345,7 +6344,7 @@ object load {
 
 object player {
 	 name LOAD51_player;
-	 file Load_20kW/Load_profile_51.player;
+	 file Load_4kW/Load_profile_51.player;
 }
 
 object load {
@@ -6360,13 +6359,13 @@ object load {
 
 object player {
 	 name LOAD52_player;
-	 file Load_20kW/Load_profile_52.player;
+	 file Load_4kW/Load_profile_52.player;
 }
 
 object load {
 	 name LOAD53;
 	 parent Bus899;
-	 phases B;
+	 phases A;
 	 base_power_B LOAD53_player.value*1052.631579;
 	 power_fraction_B 1.0;
 	 power_pf_B 0.950000;
@@ -6375,7 +6374,7 @@ object load {
 
 object player {
 	 name LOAD53_player;
-	 file Load_20kW/Load_profile_53.player;
+	 file Load_4kW/Load_profile_53.player;
 }
 
 object load {
@@ -6390,7 +6389,7 @@ object load {
 
 object player {
 	 name LOAD54_player;
-	 file Load_20kW/Load_profile_54.player;
+	 file Load_4kW/Load_profile_54.player;
 }
 
 object load {
@@ -6405,7 +6404,7 @@ object load {
 
 object player {
 	 name LOAD55_player;
-	 file Load_20kW/Load_profile_55.player;
+	 file Load_4kW/Load_profile_55.player;
 }
 
 //********************************************* 

@@ -3,12 +3,12 @@ clear all
 
 %% Paths
 LoadsDir = '../../European_LV_CSV/Load_Profiles/';
-SaveDir = 'Load_20kW/';
+SaveDir = 'Load_4kW/';
 
 
 
 %% Variables
-charging_power = 20; % 4kW charging power
+charging_power = 4; % 4kW charging power
 battery_capacity = 24; % 24 kWh
 charging_time = battery_capacity/charging_power *60; % in minutes 
 arrive_time = 17*60 ; % starting at 5:00 pm
@@ -33,9 +33,9 @@ end
 
 %% Write EVs load
 
- temp = linspace(0,12,size(loads,1))';
- loads= repmat(temp,1,size(loads,2));
-%loads = loads + EVload;
+load('EVload_4kW.mat')
+
+loads = loads + EVload;
 
 %% Write new load files
 for i=1:num_loads

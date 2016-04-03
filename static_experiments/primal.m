@@ -20,9 +20,9 @@ N = size(R,2); % Number of EVs
 M = size(R,1); % Number of lines
 
 
-x = 16 * ones(N,1); % EV charging rate
+x = 4 * ones(N,1); % EV charging rate
 marginal_benefit = 1e10* ones(N,1); % Optimization
-b = 0* ones(N,1);
+b = 4* ones(N,1);
 
 
 history.convergence = 0; % algorithm convergence

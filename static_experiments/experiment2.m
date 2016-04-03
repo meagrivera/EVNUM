@@ -32,12 +32,17 @@ for i = 1:length(N)
     %primal
     fprintf('\n\n Computing primal results')
     % primal values
+    %K= N(i)/4; % upper bound of primal function
+    step_size_primal = 1;
     [x_primal history_primal] = primal(data,step_size_primal);
     primal_iterations(i) = length(history_primal.cost);
     
     
     
     %dual
+    Lmax = max(sum(data.R)); % maximal number of lines used by an EV
+    Smax = max(sum(data.R')); % maximal number of EVs
+    step_size_dual =1e-6; % 2/(80^2*Lmax*Smax); % (for minimal multiply by 2)
     fprintf('\n\n Computing dual results')
     [x_dual history_dual] = dual(data,step_size_dual);
     dual_iterations(i) = length(history_dual.cost);
@@ -48,10 +53,19 @@ end
 %% plotting
 set(0,'defaultlinelinewidth',3)
 figure
-plot(N,primal_iterations,'-',N,dual_iterations,'-')
-xlabel('Number of EVs')
-ylabel('Iterations for 95% convergence')
-legend('primal','dual')
+plot(N,primal_iterations)
+xlabel('# EVs')
+ylabel('Iterations')
+%legend('primal','dual')
 set(gca,'FontSize',16)
+
+
+figure
+plot(N,dual_iterations)
+xlabel('# EVs')
+ylabel('Iterations')
+%legend('primal','dual')
+set(gca,'FontSize',16)
+
 
 

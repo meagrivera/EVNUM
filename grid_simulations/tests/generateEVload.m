@@ -1,7 +1,7 @@
 % generateEVarrival.m
 clear all
 %% Variables
-charging_rate = 20;
+charging_rate = 4;
 arrive_time = 17*60 ; % starting at 5:00 pm
 charging_slots = 24/charging_rate*60; % number of required charging slots in min
 
@@ -46,5 +46,5 @@ spy(EVload, 's')
 ylim([1000 24*60])
 
 %% Save the EV load
-save('EVload_20kW.mat','EVload')
+save('EVload_4kW.mat','EVload')
 

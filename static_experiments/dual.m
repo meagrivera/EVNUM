@@ -2,7 +2,7 @@
 function [x history] = dual(data, step_size)
 
 %% Dual deocmposition parameters
-ITER = 1e5;
+ITER = 1e4;
 TOL = 1e-6; % Tolerance for terminating algorithm
 
 
@@ -19,7 +19,7 @@ M = size(R,1); % Number of lines
 
 %Define optimization variables
 price = 0.1*ones(M,1);
-x = 16* ones(N,1);
+x = 4* ones(N,1);
 
 history.convergenge=0; % algorithm convergence
 history.violation=0;  % algorithm violated contraints
@@ -75,7 +75,7 @@ for k=1:ITER
     
      % stop if distance to optimal small
     if data.stop_fopt
-        distance = (abs(data.fopt-history.cost(k)))/ abs(data.fopt);
+        distance = (abs(data.fopt - history.cost(k)))/ abs(data.fopt);
         if distance < 0.05 % convergence to 95% achieved
             break;
         end

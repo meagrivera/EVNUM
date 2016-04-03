@@ -2,6 +2,9 @@
 % Plottign the results for the EU LV grid without EVs main plot 
 % c: Jose Rivera (j.rivera@tum.de)
 clear all
+%% Define folder
+ResultFolder = 'Result_primal';
+
 
 %% Grid data
 % Trafo rating
@@ -46,11 +49,12 @@ Loads = join(Loads, T,'key','phases');
 
 
 %% Simulation results 
+ResultFolder = [ResultFolder '/'];
 % Peak files
-PeakV = 'Result_no_control/output_voltage_peak.csv';
-PeakI = 'Result_no_control/output_current_peak.csv';
+PeakV = [ResultFolder 'output_voltage_peak.csv'];
+PeakI = [ResultFolder 'output_current_peak.csv'];
 % Transformer files
-TrafoPower = 'Result_no_control/Transformer_output_power.csv';
+TrafoPower = [ResultFolder 'Transformer_output_power.csv'];
  
 
 % Parse voltage

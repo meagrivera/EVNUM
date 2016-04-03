@@ -46,8 +46,8 @@ Loads = join(Loads, T,'key','phases');
 
 %% Simulation results 
 % Peak files
-PeakV = 'Result_no_control/output_voltage_11_30.csv';
-PeakI = 'Result_no_control/output_current_11_30.csv';
+PeakV = 'Result_no_control/output_voltage_peak.csv';
+PeakI = 'Result_no_control/output_current_peak.csv';
 % Transformer files
 TrafoPower = 'Result_no_control/Transformer_output_power.csv';
  
@@ -97,16 +97,33 @@ xlabel('Load number')
 ylabel('Voltage (p.u.)')
 grid on
 
-% % Transformer power
-% figure
-% plot(1:length(trafo_power), trafo_power)
-% hold on
-% plot(1:length(trafo_power), 0.8 * ones(1,length(trafo_power)), 'k--')
-% xlim([1 length(trafo_power)])
-% xlabel('Time(minute)')
-% ylabel({'Transformer', 'Power (MVA)'})
-% grid on
+% Transformer power
+figure
+plot(1:length(trafo_power), trafo_power)
+hold on
+plot(1:length(trafo_power), 0.8 * ones(length(trafo_power)), 'k--')
+xlim([1 length(trafo_power)])
+xlabel('Time(minute)')
+ylabel({'Transformer', 'Power (MVA)'})
+grid on
+
+
+% %% Extra plot overloading lines (Maybe think about modifying ampacities)
+% s = Lines{:,2};
+% t = Lines{:,3};
+% G = graph(s,t);
 % 
+% weigth = 1* ones(size(Lines,1),1);
+%  temp = find(peak_line_currents>1);
+%  weigth(temp) = 10*ones(size(temp)); 
+% 
+% figure
+% p=plot(G,'LineWidth',weigth');
+% p.XData=Buscoords{:,'x'}';
+% p.YData=Buscoords{:,'y'}';
+% 
+
+
 
 
 

@@ -108,20 +108,20 @@ ylabel({'Transformer', 'Power (MVA)'})
 grid on
 
 
-%% Extra plot overloading lines (Maybe think about modifying ampacities)
-s = Lines{:,2};
-t = Lines{:,3};
-G = graph(s,t);
-
-weigth = 1* ones(size(Lines,1),1);
- temp = find(peak_line_currents>1);
- weigth(temp) = 10*ones(size(temp)); 
-
-figure
-p=plot(G,'LineWidth',weigth');
-p.XData=Buscoords{:,'x'}';
-p.YData=Buscoords{:,'y'}';
-
+% %% Extra plot overloading lines (Maybe think about modifying ampacities)
+% s = Lines{:,2};
+% t = Lines{:,3};
+% G = graph(s,t);
+% 
+% weigth = 1* ones(size(Lines,1),1);
+%  temp = find(peak_line_currents>1);
+%  weigth(temp) = 10*ones(size(temp)); 
+% 
+% figure
+% p=plot(G,'LineWidth',weigth');
+% p.XData=Buscoords{:,'x'}';
+% p.YData=Buscoords{:,'y'}';
+% 
 
 
 
